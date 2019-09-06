@@ -1,4 +1,4 @@
-# My personal website
+# My Personal Website
 
 This is my personal website, hosted at http://joe-raad.com
 
