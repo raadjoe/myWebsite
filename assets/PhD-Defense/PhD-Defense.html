@@ -1,0 +1,1724 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>PhD Defense - Joe Raad</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white-joe.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<!-- <link rel="stylesheet" href="lib/css/zenburn.css"> -->
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<!-- TITLE SLIDE -->   
+				<section>
+					<h3 class=>IDENTITY MANAGEMENT IN <br> KNOWLEDGE GRAPHS</h3>
+					<hr>
+					
+					<div>
+						<b><small>PhD Defense - November 30, 2018</small></b>
+						<h2>Joe Raad</h2>						
+						<b><small>ABIES Doctoral School
+						<br></small></b>
+                    </div> 
+                <hr>					
+					<p>
+						<small><a href="">MIA-Paris, AgroParisTech, INRA - Paris, France</a>
+						<br>Supervisors: Juliette Dibie, Liliana Ibanescu
+						<br><br><a href="">LRI, Paris Sud University, CNRS - Orsay, France</a>
+						<br>Supervisors: Nathalie Pernelle, Fatiha Saïs</small>
+					</p><br> 
+                    <div>
+                    <img src="figures/logo-all.png" width=100%>
+                    </div>
+<!--                
+					<div class="row-title-slide">
+						<div class="column3"><img src="figures/Logo-AgroParisTech.png" width=60%></div>
+						<div class="column3"><img src="figures/Logo-Paris-Saclay.png" width=60%></div>
+						<div class="column3"><img src="figures/logo-paris-sud.png" width=35%></div>
+					</div>						
+-->
+				</section>
+				
+				<!-- MOTIVATION SECTION -->
+				<section>
+					<!--<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
+						<h3> MOTIVATION </h3>
+					</section>-->
+
+					<section>
+						<h2>Knowledge Graphs</h2>
+						<hr>
+						<p class="fragment"><b>Graph-based representation of some knowledge in a machine-readable format</b></p>
+						<p class="fragment">
+						<a href="https://www.w3.org/DesignIssues/LinkedData.html">[Linked Data Principles, Tim Berners-Lee, 2006]</a>						
+						</p>
+                        <p class="fragment">4<sup>th</sup> principle: "Link your data to other people’s data to provide context."</p>
+                        <div class="fragment">
+                            <img src="./figures/LOD-Cloud.png" style="width:35%; border:none"/><br>
+                            <small><i>LOD cloud diagram, by Richard Cyganiak and Anja Jentzsch. http://lod-cloud.net/</i></small>
+                            <br><b>Linked Open Data (LOD) Cloud:</b> a large decentralized Knowledge Graph
+                        </div>
+						<!-- <p class="fragment fade-up"> <strong>owl:sameAs<br> (the Semantic Web Identity Predicate)</p></strong> -->
+						<!-- <p class="fragment fade-up"> 
+							<code>〈x, owl:sameAs, y〉</code>
+							<br>
+							<small><u>means that:</u></small><br>
+							<code>(∀P)(Px ↔ Py)</code>							
+						</p> -->	
+					</section>
+					<section>
+						<h2>Why linking your data?</h2>
+						<hr>						
+						<div>
+						<div class="fragment"><b>DrugBank Knowledge Graph</b>
+				        <pre>
+							<code data-trim contenteditable>
+							db:drug33 rdfs:label "Dolasetronum" .
+							db:drug33 db:associatedCondition db:nausea .
+							</code>
+						 </pre></div>
+						<div class="fragment"><b>Freebase Knowledge Graph</b>
+						<pre>
+						  <code data-trim contenteditable>
+							freebase:m.02jq1 freebase:objectName "Dolasetron" .
+							freebase:m.452as freebase:sell freebase:m.02jq1 .
+							freebase:m.452as freebase:location geonames:Paris .
+						  </code>
+						</pre></div>
+                        </div>
+                        <div class="fragment">
+                            <pre>
+							<code data-trim contenteditable>
+							db:drug33 owl:sameAs freebase:m.02jq1 .
+							</code>
+						 </pre>
+                        </div>
+						<p class="fragment fade-up"> 
+				            <b>Where to find a medicine for Nausea in Paris?</b><br>
+                            <small><i>(data analysis, data integration &rarr; search engines, virtual assistants, recommender systems)</i></small>
+						</p>
+					</section>
+<!--
+					<section>
+						<h2>'Identity' Links in the LOD Cloud</h2><small>LOD-a-lot dataset <a href="http://lod-a-lot.lod.labs.vu.nl/">[Fernandez et al. 2017]</a></small>
+						<hr>
+						<table>
+						<thead>
+							<tr>
+								<th>Link</th>
+								<th>Number of Triples</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>owl:sameAs</td>
+								<td>558 M</td>
+							</tr>
+							<tr>
+								<td>skos:exactMatch</td>
+								<td>566 K</td>
+							</tr>
+							<tr>
+								<td>umbel:isLike</td>
+								<td>461 K</td>
+							</tr>
+							<tr>
+								<td>skos:closeMatch</td>
+								<td>371 K</td>
+							</tr>	
+						</tbody>
+					</table>
+					</section>
+-->
+					<section>
+						<h2>owl:sameAs</h2>
+						<hr>
+						<p class="fragment fade-up"><b>The Standard Semantic Web Identity Predicate</b></p>
+						<p class="fragment fade-up"> 
+							<code>〈x,owl:sameAs,y〉</code>
+							<br>
+							<br>							
+							Same real-world entity with two names (IRIs): x and y
+							<br>
+							<br>
+							<code>- Reflexive: &forall;x →〈x,sameAs,x〉</code><br>
+							<code>- Symmetric:〈x,sameAs,y〉→〈y,sameAs,x〉</code><br>
+							<code>- Transitive:〈x,sameAs,y〉∧〈y,sameAs,z〉→〈x,sameAs,z〉</code><br>
+							<code>-〈x,sameAs,y〉∧〈x,p,z〉→〈y,p,z〉</code>		
+						</p>	
+					</section>
+					<!-- Philosophical Point of View -->
+<!--
+					<section>
+						<h2><div>Identity is Complex...</div>
+						<div class="fragment">From a Philosophical Point of View</div></h2>
+						<hr>
+						<div class="fragment">
+						<b>1. Identity does not hold across modal contexts</b><br>
+						<i>Allowing Lois Lane to believe that <u>Superman</u> saved her without requiring her to believe that <u>Clark Kent</u> saved her</i>					
+						<p><img src="figures/Superman.png" width=15%></p>
+						</div>
+							<br><br><br>
+					</section>
+-->
+                    <section data-transition="none">
+						<h2><div>Identity is Complex...</div>
+						<div class="fragment">From a Philosophical Point of View</div></h2>
+						<hr>
+						<div class="fragment">
+						<b>1. Identity over time poses problems <a href="">[Lewis, 1986]</a></b><br>
+						<i>Since a ship may be considered the same ship, even though some (or even all) of its original components have been replaced by new ones</i>		
+						<p><img src="figures/Theseus.png" width=60%></p>
+						</div>
+							<br><br><br><br><br>
+					</section>
+					<section data-transition="none">
+						<h2><div>Identity is Complex...</div>
+						<div>From a Philosophical Point of View</div></h2>
+						<hr>
+						<div>
+						1. Identity over time poses problems <a href="">[Lewis, 1986]</a>
+						</div> <br>
+						<div>
+						<b>2. Identity is context-dependent <a href="">[Geach, 1967]</a></b><br>
+						<i>Allowing two medicines with the same chemical structure to be considered the same in a scientific context, 
+						but different in a commercial context<br>(e.g., because they are produced by different companies)</i>		
+						<p><img src="figures/Medicines.png" width=40%></p>
+						</div>	
+					</section>
+					<!-- Identity Management Services -->
+<!--
+                    <section data-transition="none"> 
+						<h2><div>Identity is Complex...</div>
+						<div>From an Operational Point of View <small>(1/3)</small></div></h2>
+						<hr>
+						<div class="fragment">
+						<b>1. Hard to distinguish between the IRI referring to a non-information resource and its corresponding information resource</b><br>						
+						<i>Barack Obama the person vs URL referring to his Web page</i><br><small><a href="">[Sense and Reference Problem - Halpin, 2010]</a></small>
+						</div><br><br><br><br>	
+					</section>
+					<section data-transition="none">
+						<h2><div>Identity is Complex...</div>
+						<div>From an Operational Point of View <small>(1/3)</small></div></h2>
+						<hr>
+						<div>
+						1. Hard to distinguish between the IRI referring to a non-information resource and its corresponding information resource
+						</div><br>
+						<div>
+						<b>2. Difficulty in finding identity assertions in the Web of Data</b><br>				
+						<i>Similarily to the WWW, backlinks in the Web of Data cannot be followed</i>
+						</div> <br><br><br>
+					</section>
+					<section data-transition="none">
+						<h2><div>Identity is Complex...</div>
+						<div>From an Operational Point of View <small>(1/3)</small></div></h2>
+						<hr>
+						<div>
+						1. Hard to distinguish between the IRI referring to a non-information resource and its corresponding information resource					
+						</div><br>
+						<div>
+						2. Difficulty in finding identity assertions in the Web of Data<br>					
+						</div>
+						<hr>
+						<div>
+						<h4>
+						Necessity for an Identity Management Service
+						</h4>
+						<ul>
+						<li>Access and Analyze Identity Links</li>
+						<li>Help Understand Identifiers Meaning</li>
+						</ul>					
+						</div>
+					</section>
+-->
+                    <section data-transition="none"> 
+						<h2><div>Identity is Complex...</div>
+						<div>From an Operational Point of View <small>(1/3)</small></div></h2>
+						<hr>
+						<div class="fragment">
+						<b>1. Difficulty in finding identity assertions in the Web of Data</b><br>			
+						<i>Backlinks in the Web of Data cannot be followed</i>
+						</div>
+						<div class="fragment"> 
+                        <hr>
+						<h4>
+						Necessity for an Identity Management Service
+						</h4>
+						<ul>
+						<li>Access Identity Links</li>
+                        <li>Access Identity Sets (after transitive closure)</li>
+						</ul>					
+						</div>
+					</section>
+					<!-- Identity Invalidation -->
+					<section data-transition="none">
+						<h2><div>Identity is Complex...</div>
+						<div>From an Operational Point of View <small>(2/3)</small></div></h2>
+						<hr>
+						<div>
+						<b>2. Data linkage approaches are rarely 100% precise</b><br>
+						<i>(e.g. precision between 67% and 86%</i> <a href="">[OAEI 2017, OAEI 2018]</a>
+						</div>
+                        <div class="fragment"> 
+                        <hr>
+						<h4>Necessity for an Efficient Identity Invalidation Approach</h4>
+						<ul>
+                        <li>Minimal Assumptions on the Data</li>
+						<li>Scalable to the Web of Data</li>
+						</ul>					
+						</div>
+					</section>
+<!--
+					<section data-transition="none">
+						<h2><div>Identity is Complex ...</div>
+						<div>From an Operational Point of View <small>(2/3)</small></div></h2>
+						<hr>
+						<div>
+						3. Data linkage approaches are rarely 100% precise
+						</div>
+						<hr>
+						<div>						
+						<h4>Necessity for an Efficient Identity Invalidation Approach</h4>
+						<ul>
+						<li>Scalable to the Web of Data</li>
+						<li>Minimal Assumptions on the Data</li>
+						</ul>					
+						</div>	
+					</section>
+-->
+					<!-- Contextual Identity -->
+                    <section data-transition="none">
+						<h2><div>Identity is Complex...</div>
+						<div>From an Operational Point of View <small>(3/3)</small></div></h2>
+						<hr>
+						<div>
+						<b>3. Modelers have different opinions about whether two objects are the same</b><br>	
+						<i>From a set of 250 owl:sameAs links, one Semantic Web expert judged that only 73 are correct identity links, whilst two other experts have judged 132 and 181 as true identity links, respectively </i><br><small><a href="">[Halpin et al., 2010]</a></small>
+						</div>
+                        <div class="fragment">
+						<b>4. Lack of alternative well-defined and standardized identity links</b><br>						
+						<i>rdfs:seeAlso, skos:exactMatch, etc. &rarr; subjective + limited inference</i>
+						</div>
+                        <div class="fragment">
+                        <hr>
+						<h4>Necessity for a new Identity Relation</h4>
+						<ul>
+						<li>Weaker notion of identity</li>
+						<li>Explicitly represent the context in which two entities are identical</li>
+						</ul>					
+						</div>
+					</section>
+                    
+<!--            
+					<section data-transition="none">
+						<h2><div>Identity is Complex...</div>
+						<div>From an Operational Point of View <small>(3/3)</small></div></h2>
+						<hr>
+						<div>
+						<b>5. Modelers have different opinions about whether two objects are the same</b><br>						
+						<i>From a set of 250 owl:sameAs links, one Semantic Web expert judged that only 73 are correct identity links, whilst two other experts have judged 132 and 181 as true identity links, respectively </i><br><small><a href="">[Halpin et al., 2010]</a></small>
+						</div> <br> <br> 
+					</section>
+					<section data-transition="none">
+						<h2><div>Identity is Complex...</div>
+						<div>From an Operational Point of View <small>(3/3)</small></div></h2>
+						<hr>
+						<div>
+						5. Modelers have different opinions about whether two objects are the same
+						</div> <br>
+						<div>
+						<b>6. Lack of alternative well-defined and standardized identity links</b><br>						
+						<i>rdfs:seeAlso, skos:exactMatch, etc. &rarr; subjective + limited inference</i>
+						</div> <br> <br> <br>
+					</section>
+					<section data-transition="none">
+						<h2><div>Identity is Complex...</div>
+						<div>From an Operational Point of View <small>(3/3)</small></div></h2>
+						<hr>
+						<div>
+						5. Modelers have different opinions about whether two objects are the same
+						</div> <br>
+						<div>
+						6. Lack of alternative well-defined and standardized identity links
+						</div>
+						<hr>
+						<div>						
+						<h4>Necessity for a new Identity Relation</h4>
+						<ul>
+						<li>Weaker Notion of Identity</li>
+						<li>Explicitly represent the context in which two entities are identical</li>
+						</ul>					
+						</div>	
+					</section>
+-->
+                    <section>
+						<h2>"The SameAs Problem"</h2>					
+						<hr>
+						<p class="fragment"><b>The Web of Data contains a large* number of erroneous identity statements</b></p>
+                        <div class="fragment">
+						<div> * &sim;21% <br>
+						<a href="">[Halpin et al., 2010]</a><br>
+						Manual evaluation of 250 owl:sameAs from the Web
+						</div><br>
+						<div> * &sim;2.8% <br>
+						<a href="">[Hogan et al., 2012]</a><br>
+						Manual evaluation of 1K identical pairs from the Web
+						</div>
+                        </div>
+					</section>
+					<section>
+						<h2>This Thesis</h2>					
+						<hr>						
+						<p><b>How to limit the misuse of identity links in knowledge graphs?</b></p>
+						<div class="fragment">
+						<hr><br>
+						<h4>CONTRIBUTIONS / OUTLINE</h4>
+						<small><i>(different but complementary solutions)</i></small>
+						<p>&#8544;. Identity Management Service</p>
+						<p>&#8545;. Identity Invalidation Approach</p>
+						<p>&#8546;. Contextual Identity Relation</p>
+						</div>
+					</section>
+				</section>
+	
+	
+	
+	
+	
+				<!-- I. NEW IDENTITY MANAGEMENT SERVICE-->
+				<section>
+					<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
+						<h2>&#8544;. Identity Management Service</h2>
+						<hr>
+						<small>
+						<li>W. Beek, <u>J. Raad</u>, J. Wielemaker, and F. van Harmelen
+						<br>"sameAs.cc: The Closure of 500M owl:sameAs Statements".
+						<br><i>Extended Semantic Web Conference ESWC, 2018 (best resource paper award)</i>
+						</li>
+						</small>
+						<hr>
+                        <div class="fragment">
+                        <h4>Related Work &bull; Objectives &bull; Approach &bull; Use Cases</h4>
+                        </div>
+					</section>
+<!--
+                    <section>
+						<h2>Related Work</h2>					
+						<hr>
+						<div>
+						<b>Identity Management Service: help users and applications identify names (IRIs) referring to the same entity | distinguish between different ones | access and analyze identity links</b>
+						</div>	
+						<div class="fragment"><hr>&bull; Centralized Identity Management Services (one global name per entity)<br>
+                            <small><a href="">[URN - Mealling and Daniel, 1999</a>; <a href="">OKKAM - Bouquet et al., 2007]</a></small>
+						<div class="negative-point">
+                            <i>Too restrictive</i>
+                        </div><br>
+						</div>
+						<div class="fragment">&bull; Identity Observatories (access identical names)<br>
+                            <small><a href="">[sameAs.org - Glaser et al., 2009]</a></small>
+                        <div class="negative-point"><i>Semantically non-interpretable | Do not keep original identity assertions</i><br><small>(e.g. skos:exactMatch, umbel:isLike)</small>
+                        </div>
+						</div>
+					</section>
+-->
+                    <section>
+						<h2>Related Work</h2>					
+						<hr>
+						<div>
+						<b>Identity Management Service: help users and applications identify names (IRIs) referring to the same entity | access to identity links and their transitive closure </b>
+						</div>	<br>
+						<div class="fragment"><a href="">[sameAs.org - Glaser et al., 2009]</a>
+                        <div class="negative-point"><i>Semantically non-interpretable identity sets | Do not keep original identity assertions</i><br><small>(e.g. include skos:exactMatch, umbel:isLike)</small>
+                        </div>
+						</div>
+					</section>
+					<section>
+						<h2>Objectives</h2>					
+						<hr>						
+						<div>A performant solution for accessing names:<br>
+                        &bull; explicitly claimed to be identical<br>
+                        &bull; implicitly claimed to be identical (after transitive closure)
+						</div><br><br>
+                        <div class="fragment">This solution should be semantically interpretable:<br>
+                        &bull; only include owl:sameAs statements<br><small>(e.g. can be used by a DL reasoner to infer new facts)</small>
+						</div>
+					</section>
+                    <section>
+						<h2>Overall Idea / Contributions</h2>					
+						<hr>
+                        <div class="align-left">
+                        <div class="fragment">
+                        <b>
+                            <ul>
+                                <li>Largest dataset of owl:sameAs links extracted from the Web to date</li>
+                            </ul>
+                        </b>  
+                        </div><br>
+                        <div class="fragment">
+                        <b>
+                            <ul>
+                                <li>Approach for efficiently computing and storing the transitive closure</li>
+                            </ul>
+                        </b>    
+                            <ul class="no-bullets">
+                                <li>- Minimum memory usage</li>
+                                <li>- HDT for compressing the explicit identity network (owl:sameAs links)</li>
+                                <li>- RocksDB for storing identity sets (no materialization of the closure)</li>
+                            </ul>
+                        </div><br>
+                        <div class="fragment">
+                            <b>
+                            <ul>
+                                <li>Efficient access to the identity links and their identity sets</li>
+                            </ul>
+                        </b> 
+                            <ul class="no-bullets">
+                                <li>- Linked Data Fragments for querying triple patterns</li>
+                                <li>- HDT and CSV data dumps </li>
+                                <li>- APIs</li>
+                                <li>- Search bar</li>
+                            </ul>
+                        </div>
+                        </div>
+					</section>
+					<section data-transition="none"> 
+						<h2>sameAs.cc</h2>					
+						<hr>						
+						<p><img src="./figures/apprroach-1.png" style="width:100%; border:none"/></p>
+					</section>
+                    <section data-transition="none">
+						<h2>sameAs.cc</h2>					
+						<hr>						
+						<p><img src="./figures/apprroach-2.png" style="width:100%; border:none"/></p>
+					</section>
+                    <section data-transition="none">
+						<h2>sameAs.cc</h2>					
+						<hr>						
+						<p><img src="./figures/apprroach-3.png" style="width:100%; border:none"/></p>
+					</section>
+                    <section data-transition="none">
+						<h2>sameAs.cc</h2>					
+						<hr>						
+						<p><img src="./figures/apprroach-4.png" style="width:100%; border:none"/></p>
+					</section>
+					<section>
+						<h2>Analysis - Namespace Level</h2>					
+						<hr>
+                        <div class="fragment">
+				        <p><a href="http://sameas.cc/explicit/img"><img src="./figures/analysis-namespace-labels.png" style="width:77%; border:none"/></a></p>
+                            <p>2.6K namespaces <i>connected by</i> 10.7K edges <i>forming</i> 142 components</p></div>
+					</section>
+					<!--<section>
+						<h2>Use-cases</h2>					
+						<hr>													  	
+							 <p class="fragment">Query Answering (under entailment)</p>
+							 <p class="fragment">Ontology Alignment</p>
+							 <p class="fragment">Basis for Identity Link Invalidation Approaches</p>
+					</section>-->
+					<section>
+						<h2>Analysis - IRI Level</h2>					
+						<hr>
+						<p> The largest identity set contains 177,794 IRIs that 'should' represent different names to the same real-world entity</p>
+						<div class="fragment"> <u>However:<br></u>
+						<pre><code data-trim data-noescape>
+						http://dbpedia.org/resource/Albert_Einstein
+						http://dbpedia.org/resource/Basketball
+						http://dbpedia.org/resource/Coca-Cola
+						http://dbpedia.org/resource/Deauville
+						http://dbpedia.org/resource/Italy
+						http://dbpedia.org/resource/Lists_of_christian_religions
+						...
+						</code></pre> 
+						Full list at: <a href="https://sameas.cc/term?id=4073">https://sameas.cc/term?id=4073</a>	
+						</div>						
+					</section>
+				</section>
+				
+				<!-- II. DETECTING ERRONEOUS IDENTITY LINKS -->
+				<section>
+					<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
+						<h2>&#8545;. Detecting Erroneous Identity Links</h2>
+						<hr>
+						<small>
+						<li><u>J. Raad</u>, W. Beek, N. Pernelle, F. Saïs, and F. van Harmelen
+						<br>"Détection de liens d’identité erronés en utilisant la détection de communautés dans les graphes d'identité".<br><i>Revue des Sciences et Technologies de l'Information ISI, 2018</i>
+						</li><br>
+						<li><u>J. Raad</u>, W. Beek, F. van Harmelen, N. Pernelle, and F. Saïs
+						<br>"Detecting Erroneous Identity Links on the Web using Network Metrics".<br><i>International Semantic Web Conference ISWC, 2018</i>
+						</li>
+						</small>
+						<hr>
+                        <div class="fragment">
+                        <h4>Related Work &bull; Objectives &bull; Approach &bull; Experiments/Evaluation</h4>
+                        </div>
+					</section>
+                    <section>
+						<h2>Related Work</h2>					
+						<hr>
+						<div>
+						<b>Detect erroneous owl:sameAs | Validate correct ones</b>
+						</div>	<br>
+                        <div class="fragment">&bull; Content-based (textual/resource description, property names)<br><small><a href="https://pdfs.semanticscholar.org/ef42/43e8fa81135c87d5591c84c9cfcd24c82875.pdf">[Acosta et al. 2013</a>; <a href="http://www.diva-portal.org/smash/get/diva2:723249/FULLTEXT02.pdf#page=34">Paulheim 2014</a>; <a href="https://hal.inria.fr/hal-01275943/document">Papaleo et al. 2014</a>; <a href="https://link.springer.com/chapter/10.1007/978-3-319-22849-5_10">Cuzzola et al. 2015]</a></small>
+                        <div class="negative-point"><i>Mappings/textual description not always available | Property names similarity is not sufficient</i></div><br>
+						</div>
+                        <div class="fragment">&bull; Inconsistency-based (ontology axioms, differentFrom, UNA)<br><small><a href="https://infoscience.epfl.ch/record/138602/files/p591-cudre.pdf">[Cudre-Mauroux et al. 2009</a>; <a href="http://www.aaai.org/ocs/index.php/AAAI/AAAI13/paper/download/6491/6873">de Melo 2013</a>; <a href="https://dl.acm.org/citation.cfm?id=3106497">Valdestilhas et al. 2017</a>; <a href="http://www.websemanticsjournal.org/index.php/ps/article/download/224/221">Hogan et al. 2012</a>; <a href="https://hal.inria.fr/hal-01275943/document">Papaleo et al. 2014]</a></small>
+						<div class="negative-point"><i>Assumptions not always valid/available on the Web of Data</i></div><br>
+						</div>
+                        <div class="fragment">&bull; Network Metrics (sameAs chains, degree, centrality)<br><small><a href="https://link.springer.com/content/pdf/10.1007/978-3-642-30284-8_13.pdf">[Guéret et al. 2012]</a></small>
+                        <div class="negative-point"><i>Low Accuracy</i></div>
+						</div>
+                        <div class="fragment">
+                            <h4><div class="negative-point"><hr>No approach has proven its feasibility on the Web of Data</div></h4>
+                        </div>
+					</section>
+					<section>
+						<h2>Objectives</h2>					
+						<hr>										
+                        <p class="fragment">Scalable to the Web of Data</p>
+						<p class="fragment">No assumptions on the data
+						<br><small>(e.g. UNA, textual description, schema mappings)</small></p>
+                        <p class="fragment">High accuracy, precision and recall</p>
+                        <p class="fragment">Provide materialized and public results on real-world data<br></p>
+					</section>
+					<section>
+						<h2>Overall Idea</h2>					
+						<hr>						
+						<div class="fragment"><img src="figures/community-structure.png" style="width:100%"/>
+                        <div>Use the community structure of the network containing solely owl:sameAs links to detect erroneous identity links (and validate correct ones) + links symmetry</div>
+						</div>
+						<!-- <p class="fragment">By assigning an error degree for each link relying on the density of the community(ies) and the symmetrical characteristic of the link</p> -->
+						<br>				
+					</section>
+					<section data-transition="none">
+						<h2>Identity Link Invalidation Approach<div><small>[4 main steps]</small><hr></div></h2>						
+						<div class="fragment">1. Extract the explicit identity network<br><small>(weighted network of owl:sameAs links)</small>
+						<br>2. Partition the sameAs network into equality sets<br><small>(connected component theoretically representing the same entity)</small></div>
+						<div class="fragment"><b>3. Detect the community structure within each equality set</b></div>
+						<div class="fragment">
+						<i>Using the Louvain algorithm based on the Modularity measure <small><a href="https://arxiv.org/pdf/0803.0476.pdf">[Blondel et al., 2008]</a></small>
+                        </i>
+                        <br>
+                        <i><ul>
+							<li> Adapted to weighted networks </li>
+							<li> Low computational complexity [O(n log n)]</li>
+							<li> Outperforms other algorithms</li><small><a href="https://arxiv.org/pdf/0908.1062.pdf">[Lancichinetti and Fortunato. 2009</a>; <a href="https://www.nature.com/articles/srep30750">Yang et al. 2016]</a></small>
+                        </ul></i>
+                        </div><br><br><br>
+					</section>
+					<section data-transition="none">
+						<h2>Identity Link Invalidation Approach<div><small>[4 main steps]</small><hr></div></h2>					
+						<p>1. Extract the explicit identity network<br><small>(weighted network of owl:sameAs links)</small>
+						<br>2. Partition the sameAs network into equality sets<br><small>(connected component theoretically representing the same entity)</small></p>
+						<p>3. Detect the community structure within each equality set</p>
+						<div><b>4. Assign an error degree for each owl:sameAs link</b></div>
+						<div>
+                        <i>[0, 1] based on the weight of the link and the density of the community(ies)</i>
+						  <div>
+						  <img src="./figures/intra-err-degree.png" style="width:55%; border:none"/>
+						  </div>
+						  <div>
+						  <img src="./figures/inter-err-degree.png" style="width:55%; border:none"/>
+						  </div>
+						</div>
+					</section>
+<!--
+                    <section>
+						<h2>Experiments</h2>
+						<hr>
+                        <div class="fragment">
+						<div>					
+						  <h4>Quantitative Evaluation</h4>
+                        </div>
+                        <div><b>&bull; Sample 0:</b> 28.3 billion triples (558.9 million owl:sameAs)
+                           <br> <a href="http://lod-a-lot.lod.labs.vu.nl/">[LOD-a-lot dataset]</a>
+                            </div></div><br><br>
+                        <div class="fragment">
+                        <div>					
+						  <h4>Qualitative Evaluation</h4>
+                        </div>
+                        <div>
+                            <b>&bull; Sample 1:</b> 109 random sameAs with different error degrees<br>
+                            <b>&bull; Sample 2:</b> 39 random sameAs > 0.9<br>
+                            <b>&bull; Sample 3:</b> 32 random sameAs from Barack Obama Equality Set<br>
+                            <b>&bull; Sample 4:</b> 78 DBPedia-Freebase sameAs from Gold Standard <a href="">[Acosta et al., 2013]</a><br>
+                            <b>&bull; Sample 5:</b> 780 random erroneous sameAs<br>
+                        </div>      
+                        <div class="row">						
+						<div class="column3">
+                            <div>
+                                <b><u>Precision</u></b><br>
+                                <small>
+                                <div class="eq-c">
+                                    <div class="fraction"><span class="fup">TP</span><span class="bar">/</span><span class="fdn">TP + FP</span>
+                                    </div>
+                                </div>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="column3">
+                            <div>
+                                <b><u>Accuracy</u></b><br>
+                                <small>
+                                <div class="eq-c">
+                                    <div class="fraction"><span class="fup">TN + TP</span><span class="bar">/</span><span class="fdn">Total</span>
+                                    </div>
+                                </div>
+                                </small>
+                            </div>
+                        </div>	
+                        <div class="column3">
+                            <div>
+                                <b><u>Recall</u></b><br>
+                                <small>
+                                <div class="eq-c">
+                                    <div class="fraction"><span class="fup">TP</span><span class="bar">/</span><span class="fdn">TP + FN</span>
+                                    </div>
+                                </div>
+                                </small>
+                            </div>
+                        </div>
+					</div>
+                    </div>
+					</section>
+-->
+					<section>
+						<h2>Quantitative Evaluation</h2>
+						<hr>
+                        <div class="fragment">
+						<div>					
+						  <img src="./figures/error-degree-distribution.png" style="width:50%; border:none"/>
+                        </div>
+                        <div><i>Error degree distribution of 556 million owl:sameAs <a href="http://lod-a-lot.lod.labs.vu.nl/">[LOD-a-lot dataset]</a><br>(total runtime: 11 hours on 2 CPU cores)</i>
+                        </div>
+                        <div><br>
+                        <ul>
+						 <li class="fragment">Check if links with high error degree have higher probability of incorrectness
+                         </li>
+						 <li class="fragment">Fix a threshold that maximizes accuracy, precision and recall</li>
+						</ul>
+                        </div>
+                        </div>
+					</section>
+					<section>
+						<h2>Qualitative Evaluation <small>(1/2)</small></h2>
+						<hr>
+						<b>Manual evaluation of 200 random owl:sameAs by 4 Semantic Web experts</b><hr>
+                    <table>
+						<thead>
+							<tr>
+								<th></th>
+								<th>0-0.2</th>
+								<th>0.2-0.4</th>
+								<th>0.4-0.6</th>
+								<th>0.6-0.8</th>
+								<th>0.8-1</th>
+                                <th>Total</th>
+							</tr>
+                            <tr>
+								<td><b>Total</b></td>
+								<td>40</td>
+								<td>40</td>
+								<td>40</td>
+								<td>40</td>
+								<td>40</td>
+                                <td><b>200</b></td>
+							</tr>
+						</thead>
+						<tbody border="1" class="fragment">
+							<tr class="fragment, negative-point">
+								<td><b><i>can't tell</i></b></td>
+								<td><i>5</i></td>
+								<td><i>18</i></td>
+								<td><i>19</i></td>
+								<td><i>31</i></td>
+								<td><i>18</i></td>
+                                <td><b><i>91</i></b></td>
+							</tr>
+                            <tr class="fragment">
+								<td><b>same</b></td>
+								<td>35<br>(100%)</td>
+								<td>22<br>(100%)</td>
+								<td>18<br>(85.7%)</td>
+								<td>7<br>(77.8%)</td>
+								<td>15<br>(68.2%)</td>
+                                <td><b>97<br>(89%)</b></td>
+							</tr>
+							<tr class="fragment">
+								<td><b>related + unrelated</b></td>
+								<td>0<br>(0%)</td>
+								<td>0<br>(0%)</td>
+								<td>3<br>(14.3%)</td>
+								<td>2<br>(22.2%)</td>
+								<td>7<br>(31.8%)</td>
+                                <td><b>12<br>(11%)</b></td>
+							</tr>
+						</tbody>
+					</table>
+						<!--<div>
+						  <img src="./figures/evaluation-1.png" style=" border:none"/>				  
+						</div>-->
+                        <p class="fragment"><b>1.</b> The higher an error degree is, the more likely an owl:sameAs link is erroneous</p>
+						<p class="fragment"><b>2.</b> All evaluated links with an error degree &leq; 0.4 are correct</p>
+                        
+					</section>				
+					<section>
+						<h2>Qualitative Evaluation <small>(2/2)</small></h2>
+						<hr>
+                        <div class="align-left">
+                        <div class="fragment">
+                            <div>
+                            <b> Evaluation of 5 different samples (1,038 owl:sameAs after discarding can't tell)
+                            </b> <br>   
+                                <ul>
+                                    <li>258 owl:sameAs extracted from the dataset (78 from gold standard)</li>
+                                    <li>780 injected erroneous owl:sameAs (from 40 random different terms)</li>
+                                </ul>
+                            </div>
+                        </div><br>
+                        <div class="fragment">
+                            <div>
+                            <b>When threshold is fixed at 0.99 (true positive TP = wrong sameAs + err > 0.99)
+                            </b>    
+                                <ul>
+                                    <li>71% precision (TP / TP + FP)</li>
+                                    <li>91% recall (TP / TP + FN)</li>
+                                    <li>92% accuracy (TP + TN / Total)</li>
+                                    <li>1.2M owl:sameAs with an error degree > 0.99</li> 
+                                </ul>
+                            </div>
+                        </div>
+                        </div>
+                    </section>            
+                    <section>
+                    <h2>Additional Evaluation</h2>
+						<hr>
+<!--
+                        <table>
+						<thead>
+							<tr>
+								<th></th>
+								<th>Symmetrical</th>
+								<th>Non-symmetrical</th>
+								<th>Total</th>
+							</tr>
+						</thead>
+						<tbody>
+                            <tr>
+								<td><b>Total</b></td>
+								<td>94</td>
+								<td>164</td>
+								<td>258</td>
+							</tr>
+							<tr class="fragment">
+								<td><b>same</b></td>
+								<td>92<br>(98%)</td>
+								<td>127<br>(77%)</td>
+								<td>219<br>(85%)</td>
+							</tr>
+                            <tr class="fragment">
+								<td><b>related + unrelated</b></td>
+								<td>2<br>(2%)</td>
+								<td>37<br>(23%)</td>
+								<td>39<br>(15%)</td>
+							</tr>                   
+						</tbody>
+					</table><br>
+-->
+                    <div class="fragment">
+                        <b>&bull; Precision increases in larger equality sets</b><br>precision increases from 40% in random equality sets to 88% in the largest equality set 
+                    </div> <br>
+                    <div class="fragment">
+                        <b>&bull; Reciprocally asserted owl:sameAs are more likely to be correct</b><br>discarded the weight from the error degree &rarr; precision drops from 88% to 11% in the largest equality set
+                    </div><br>
+                    <div class="fragment"><hr>
+                    <b>We estimate that 4% of owl:sameAs links in the LOD Cloud are erroneous<br>(around 22 million owl:sameAs)</b><br><small>(based on error degree distribution + number of symmetrical links)</small>
+                    </div>
+                    </section>
+<!--
+                    <section>
+						<h2>Equality Set - 'Barack Obama'</h2>
+						<hr>
+                        <div>
+						440 names 'should' denote the same real-world entity <small><a href="http://sameas.cc/term?id=5723">(EqSet 5723)</a></small><br><br>
+						<img src="./figures/community-structure2.png" style="width:100%; border:none"/>
+                        </div>
+                        <div>
+							<b>C0:</b> person; <b>C1:</b> president; <b>C2:</b> government; <b>C3:</b> senator
+				        </div>
+					</section>    
+					<section>
+						<h2>Who is messing up the LOD Cloud?</h2>
+						<hr>
+						<div>
+						  <pre>
+						  <code data-trim contenteditable>
+							  freebase:m.05b6w1g owl:sameAs dbr:President_Barack_Obama
+							  freebase:m.05b6w1g owl:sameAs dbr:President_Obama 						 
+						  </code></pre>
+						</div>
+						<div class="fragment">
+						  <pre>
+						  <code data-trim contenteditable>
+							  freebase:m.05b6w1g freebase:object.name "Presidency of Barack Obama"@en 							  
+						  </code></pre>
+						</div>
+						<div class="fragment">
+                            The two only owl:sameAs with an error degree > 0.9999<br>
+                        </div>
+                        <div class="fragment"><hr>
+                            <b>We estimate that 4% of owl:sameAs links in the LOD are erroneous<br>(around 22.5 millions links)</b><br><small>(based on error degree distribution + number of symmetrical links)</small><br><small>previous estimations:<br>2.8% by <a href="https://www.emse.fr/~zimmermann/Papers/jws-si2012.pdf">[Hogan et al. 2012] </a> and 21% by <a href="http://tw.rpi.edu/media/latest/261.pdf">[Halpin et al. 2010]</a></small>
+                        </div>
+					</section>
+-->
+					<section>
+						<h2>Identity depends on who's asking</h2>
+						<hr>
+						<p><b>Some of the detected owl:sameAs are clearly erroneous</b><br><small><code>〈Bolivia, owl:sameAs, Albert_Einstein〉</code></small></p>
+						<p class="fragment"><b>Some identity assertions relate two closely related terms that are considered the same in some applications but not in others</b><br>(explains the disagreement between Semantic Web experts in judging owl:sameAs links <a href="http://tw.rpi.edu/media/latest/261.pdf">[Halpin et al. 2010]</a>)</p>					
+                        <div class="fragment"><hr><h4>We need a contextual identity relation</h4>
+                        </div>			
+					</section>
+				</section>
+				
+				
+				
+				
+				<!-- III. CONTEXTUAL IDENTITY RELATION -->
+				<section>
+					<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
+						<h2>&#8546;. Contextual Identity Relation</h2>
+						<hr>
+						<small>
+						<li><u>J. Raad</u>, N. Pernelle, F. Saïs, J. Dibie, L. Ibanescu, and S. Dervaux
+						<br>"Comment représenter et découvrir des liens d’identités contextuels dans une base de connaissances : applications à des données expérimentales en science du vivant".
+						<br><i>Revue d’Intelligence Artificielle RIA, 2018</i>
+						</li><br>
+						<li><u>J. Raad</u>, N. Pernelle, and F. Saïs
+						<br>"Detection of Contextual Identity Links in a Knowledge Base".<br><i>Knowledge Capture Conference K-Cap, 2017</i>
+						</li><br>
+						<li><u>J. Raad</u>, N. Pernelle, and F. Saïs
+						<br>"Détection de liens d’identité contextuels dans une base de connaissances".<br><i>28es Journées francophones d’Ingénierie des Connaissances IC, 2017 (best paper award)</i>
+						</li><br>
+						<li>L. Ibanescu, J. Dibie, S. Dervaux, E. Guichard, and <u>J. Raad</u>
+						<br>"PO<sup>2</sup> - A Process and Observation Ontology in Food Science. Application to Dairy Gels".<br><i>Research Conference on Metadata and Semantics Research MTSR, 2016</i>
+						</li>
+						</small>
+						<hr>
+                        <div class="fragment">
+                        <h4>Related Work &bull; Objectives &bull; Approach &bull; Experiments</h4>
+                        </div>
+					</section>
+                    <section>
+						<h2>Related Work</h2>					
+						<hr>
+						<div>
+						<b>Propose alternative semantics for identity</b>
+						</div>	
+						<div class="fragment"><hr>&bull; Alternative Predicates (skos:exactMatch, Similarity Ontology)<br>
+                            <small><a href="">[Halpin et al., 2010]</a></small>
+						<div class="negative-point"><i>Subjective | Context not Explicit | Limited Inference</i></div><br>
+						</div>
+						<div class="fragment">&bull; Contextual Identity (context is a set of properties)<br>
+                            <small><a href="">[Beek et al., 2016]</a></small>
+                        <div class="negative-point"><i>Considers only local data properties | No RDF representation of contexts</i></div>
+						</div>
+					</section>
+                    <section>
+						<h2>Contextual Identity Objectives</h2>					
+						<hr>
+                        <p class="fragment"><b>1. Explicitly associate the identity relation to a context </b></p>
+                        <div class="fragment"><b>2. Represent the context in RDF</b></div>
+                        <i><div class="fragment">owl:sameAs &rarr; two names can be used interchangeably within the available set of knowledge (ontology is a formal representation of the knowledge)
+                        </div><br>
+                        <div class="fragment">contextual identity &rarr; two names can be used interchangeably in a subset of the available knowledge (subset of the ontology)
+						</div></i><br>
+                        <div class="fragment"><b>3. Automatically detect the contexts in which two instances are identical</b></div>
+<!--						<p class="fragment"><b>4. Filter irrelevant contexts</b></p>-->
+                        
+					</section>
+					<section data-transition="none">
+					<h2>Contextual Identity - Example</h2>
+						<hr>						
+						<p><img src="figures/Contexts1.png" style="width:85%"/></p>
+						<p class="fragment">In which context “drug1” is considered as identical to “drug2”?</p>
+					</section>
+					<section data-transition="none">
+					<h2>Contextual Identity - Example</h2>
+						<hr>						
+						<p><img src="figures/Contexts2.png" style="width:85%"/></p>
+						<p>1. In a context where we discard the property “name” and “hasValue”</p>
+					</section>
+					<section data-transition="none">
+					<h2>Contextual Identity - Example</h2>
+						<hr>						
+						<p><img src="figures/Contexts3.png" style="width:88%"/></p>
+						<p>2. In a context where we discard the property “name” and the Weight of Lactose</p>
+					</section>
+<!--
+                    <section>
+					<h2>Context Definition</h2>
+						<hr>
+						<pre class="fragment">
+						  <code data-trim data-noescape>
+							Given an RDFS Ontology O = (C, P, A) with  
+							C = set of classes
+							P = set of properties
+							A = set of axioms (e.g. domains and ranges, subsumption)
+						  </code>
+						</pre>
+						<pre class="fragment">
+						  <code data-trim data-noescape>
+							A (Global) Context is a sub ontology GC<sub>u</sub> = (C<sub>u</sub>, P<sub>u</sub>, A<sub>u</sub>) with 
+							C<sub>u</sub> ⊆ DepC ⊆  C
+							P<sub>u</sub> ⊆ P
+							A<sub>u</sub> = domain and range axioms more specific than those described in A
+						  </code>
+						</pre>
+					 <p class="fragment">Some contexts are more specific than others (order relation)<i>
+                        <br><b>GC<sub>u</sub> ≤ GC<sub>v</sub></b><br>if C<sub>v</sub> ⊆ C<sub>u</sub>, P<sub>v</sub> ⊆ P<sub>u</sub>, and ∀p ∈ Pv: 
+                         <br>domain<sub>v</sub>(p) ⊑ domain<sub>u</sub>(p) and range<sub>v</sub>(p) ⊑ range<sub>u</sub>(p)</i></p> 						
+					</section>
+-->
+					<!--<section>
+					<h2>Contextual Identity is not Similarity</h2>
+						<hr>						
+						<p class="fragment">We do not aim at quantifying how much two entities are similar<br>(e.g. using similarity distance measures or other key features)</p>
+						<p class="fragment"><b>Contextually identical entities</b><br>Based on the available defined set of knowledge (i.e. context), these two entites cannot be distinguished other by their names (IRIs)<br><small>(these two names can be used interchangeably in this context)</small></p>
+					</section>-->
+<!--
+					<section>
+					<h2>Contributions / Approach</h2>
+						<hr>						
+						<p class="fragment">1. Introduce the notion of a Global Context<br><small>(a global context is a sub-ontology represented as a Named Graph in RDF)</small></p>
+						<p class="fragment">2. Define the conditions in which two class instances are identical in a Global Context<br><small>Short Answer: if their contextual descriptions are isomorphic up to a renaming of the instances IRI</small></p>
+						<div class="fragment"><i>
+                            Assumptions:</i>
+						<i>
+						<ul>
+							<li>Schema Uniformity (two instances of the same class, and the same ontology)</li>
+							 <li class="fragment">Notion of Descriptive Classes (for preserving order relation between contexts)</li> 
+							<li>Local Completeness (when a property is instantiated, all its properties are known)</li>
+						</ul>
+						</i>
+                            </div>
+					</section>
+-->                 <section data-transition="none">
+					<h2>Contributions / Approach</h2>
+						<hr>						
+						<p><b>1. Introduce the notion of a Global Context</b><br><small>(a global context is a sub-ontology represented as a Named Graph in RDF)</small></p>
+						<pre class="fragment">
+						  <code data-trim data-noescape>
+							Given an RDFS Ontology O = (C, P, A) with  
+							C = set of classes
+							P = set of properties
+							A = set of axioms (e.g. domains and ranges, subsumption)
+						  </code>
+						</pre>
+						<pre class="fragment">
+						  <code data-trim data-noescape>
+							A (Global) Context is a sub ontology GC<sub>u</sub> = (C<sub>u</sub>, P<sub>u</sub>, A<sub>u</sub>) with 
+							C<sub>u</sub> ⊆ DepC ⊆  C
+							P<sub>u</sub> ⊆ P
+							A<sub>u</sub> = domain and range axioms more specific than those described in A
+						  </code>
+						</pre>
+					 <p class="fragment">Some contexts are more specific than others (order relation)<i>
+                        <br><b>GC<sub>u</sub> ≤ GC<sub>v</sub></b><br>if C<sub>v</sub> ⊆ C<sub>u</sub>, P<sub>v</sub> ⊆ P<sub>u</sub>, and ∀p ∈ Pv: 
+                         <br>domain<sub>v</sub>(p) ⊑ domain<sub>u</sub>(p) and range<sub>v</sub>(p) ⊑ range<sub>u</sub>(p)</i></p>
+					</section>
+					<section data-transition="none">
+					<h2>Contributions / Approach</h2>
+						<hr>						
+						<p><b>1. Introduce the notion of a Global Context</b><br><small>(a global context is a sub-ontology represented as a Named Graph in RDF)</small></p>
+						<div><b>2. Define the conditions in which two class instances are identical in a Global Context</b>
+                        <div class="fragment">
+                        <p><small>(if their contextual descriptions are isomorphic up to a renaming of the instances IRI)</small></p>
+                        <p><img src="figures/Contextual-desc.png" style="width:85%"/></p>
+                        </div>
+                        </div>
+					</section>
+					<section data-transition="none">
+					<h2>Contributions / Approach</h2>
+						<hr>						
+						<p><b>1. Introduce the notion of a Global Context</b><br><small>(a global context is a sub-ontology represented as a Named Graph in RDF)</small></p>
+						<p><b>2. Define the conditions in which two class instances are identical in a Global Context</b><br><small>(if their contextual descriptions are isomorphic up to a renaming of the instances IRI)</small></p>
+						<p><b>3. Detect the most specific Global Context(s) in which a pair of instances of a target class are identical</b></p>
+						<p class="fragment"><img src="figures/DECIDE.png" style="width:63%"/></p>
+					</section>
+					<section>
+					<h2>Contextual Identity in Practice</h2>
+						<hr>						
+						<p class="fragment">Can these identity links be detected in a real-world knowledge graph?</p>
+						<p class="fragment">What is the benefit of having contextual identity links in a knowledge graph?</p>
+                        <div class="fragment">
+                            <hr><b>Complex case:<br>Scientific data in the domain of Life Sciences</b>
+                        </div>
+					</section>
+					<section>
+					<h2>Complexity - Life Sciences Data</h2>
+						<hr>						
+						<p class="fragment">Conditions tend to change even slightly from one experiment to another<br>&rarr; things can rarely be declared the same<br><small>(e.g. not the exact same materials, different sample size, different experts)</small></p>
+						<p class="fragment">Identity depends on each expert and application<br>&rarr; impossible that experts manually provide all possible contexts</p>
+                        <p class="fragment">Complex Ontologies<br><small>(large number of classes, different granularity, long paths for attaining literal values)</small></p>
+						<div class="fragment"><hr><b>Current Situation: disconnected experiments or erroneous owl:sameAs</b><br>
+						<b>&rarr; limited or erroneous inferences</b></div>
+					</section>
+                    <section>
+					<h2>In addition to identity problems...</h2>
+						<hr>
+<!--                        <img src="figures/LIONES.png" width="50%"/><br>-->
+						<p class="fragment">1. Syntactic Problems<br><small>heterogeneity of the formats in which scientific data are published</small></p>
+						<p class="fragment">2. Semantic Problems<br><small>terminological variations encountered across the multiple scientific datasets<br>(e.g. synonyms, aliases, multilingualism)</small></p>
+                        <div class="fragment"><hr>
+                            <b>LIONES Project</b><br><br>
+                        <div>1. Make scientific experiments Findable, Accessible, Interoperable, Reusable <br><small><a href="">[FAIR principles, 2016]</a></small></div>
+                        <div>2. Link these scientific experiments</div>
+                        </div>
+                        <div class="fragment"><hr>
+                            <b>Best practices: adopt Linked Data principles<br>(construct 5-star knowledge graphs)<br><small><a href="https://www.w3.org/DesignIssues/LinkedData.html">[Linked Data Principles - Tim Berners-Lee, 2010]</a></small></b>
+                        </div>
+					</section>
+<!--
+					<section>
+					<h2>Challenges</h2>
+						<hr>						
+						<p>1. Syntactic Problems<br><small>heterogeneity of the formats in which scientific data are published</small></p>
+						<p>2. Semantic Problems<br><small>terminological variations encountered across the multiple scientific datasets<br>(e.g. synonyms, aliases, multilingualism)</small></p>
+						<p>3. Identity Problems</p>
+						<div class="fragment"><hr>
+                            <b>Best practices: adopt Semantic Web technologies<br>(construct 5-star knowledge graphs)<br><small><a href="https://www.w3.org/DesignIssues/LinkedData.html">[Linked Data Principles - Tim Berners-Lee, 2010]</a></small></b>
+                        </div>
+					</section>
+-->
+                    <section>
+					<h2>Process and Observation Ontology (PO<small>2</small>)</h2>
+						<hr>						
+						<img src="figures/po2.jpeg" width="80%"/>
+                        <div>
+                        67 classes, 61 object properties, 12 data properties
+                        </div>
+                        <div>
+                        Integrated with BFO | Aligned with SOSA, SSN, QUDT, and OWL-Time 
+                        </div>
+                        <div><small><a href="http://agroportal.lirmm.fr/ontologies/PO2">http://agroportal.lirmm.fr/ontologies/PO2</a></small></div>
+					</section>
+					<section>
+					<h2>5-star Knowledge Graph for Life Sciences</h2>
+						<hr>						
+						<div><img src="figures/LIONES.png" style="width:55%"/>
+						</div><small><a href="http://sonorus.agroparistech.fr:7200">http: //sonorus.agroparistech.fr:7200</a></small>
+					</section>
+					<section>
+					<h2>Contextual Identity for Life Sciences</h2>
+						<hr>						
+						<p><img src="figures/DECIDE-2.png" style="width:55%"/></p>
+                        <div>
+                        <table  class="fragment">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Mixture</th>
+								<th>Step</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="align-left"><b># Individuals of target class</b></td>
+								<td>1,187</td>
+								<td>581</td>
+							</tr>
+							<tr>
+								<td class="align-left"><b># Possible pairs</b></td>
+								<td>703,891</td>
+								<td>168,490</td>
+							</tr>
+							<tr>
+								<td class="align-left"><b># Different Global Contexts</b></td>
+								<td>2,232</td>
+								<td>718</td>
+							</tr>
+                            <tr>
+								<td class="align-left"><b># Identity Links</b></td>
+								<td>1,279,376</td>
+								<td>348,017</td>
+							</tr>
+                            <tr class="negative-point">
+								<td><b># Most Specific Global Context per pair</b></td>
+								<td>1.81</td>
+								<td>2.06</td>
+							</tr>
+						</tbody>
+					</table>
+                        
+                        </div>
+					</section>
+                    <section>
+					<h2>Contextual Identity for Rule Detection</h2>
+						<hr>
+                        <code>identical<sub>〈GCi〉</sub>(x, y) ∧ observationMeasure(x, m1)</code> <br>
+                        <code class="fragment">→ observationMeasure(y, m2) with m1 ≃ m2</code><br><br>
+                        <div class="fragment">
+                        <b>38,844 rules were discovered</b>
+                            <br><small>after exploiting the global contexts order relation</small>
+                        <code>
+                            <br>Example: identical<sub>〈GC3〉</sub>(x, y) → same(pH) <br>[4.5% error rate; 647 support]<br><small>x and y have the same citric acid weight</small>
+                        </code>
+                        </div><br>
+                        <div class="fragment">On average the error rate of a rule decreases by 12 p.p when a global context is replaced by a more specific global context</div>
+                        <div class="fragment"><img src="figures/expert-rules.png" style="width:80%"/></div>
+					</section>
+<!--
+					<section>
+					<h2>Contextual Identity for Rule Detection</h2>
+						<hr>						
+						<p><img src="figures/Rule-Detection.png" style="width:60%"/></p>
+						<p class="fragment">We want to detect for each context GCi, the measures mi where<br><br>
+						identiConTo<GCi>(i1, i2) ∩ observes(i1, m1) → observes(i2, m2) with m1 ≃ m2<br><br>
+						<b>identiConTo<GCi>(i1, i2) → same(mi)</b>
+						</p>
+					</section>
+					<section>
+					<h2>Contextual Identity for Rule Detection</h2>
+						<hr>						
+						<p><img src="figures/Rules.png" style="width:90%"/></p>
+					</section>	
+-->
+				</section>
+				
+				
+				
+				
+				
+				
+				<!-- 4. CONTEXTUALLY LINKED KNOWLEDGE GRAPH FOR LIFE SCIENCE -->
+				<!-- <section>
+					<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
+						<h2>4. Contextually Linked Knowledge Graph for Life Sciences</h2>
+					</section>
+					<section>
+					<h2>Identity Problem in Life Sciences</h2>
+						<hr>						
+						<p class="fragment">Conditions tend to change even slightly from one experiment to another<br><sub>(e.g. not the exact same materials, different sample size, different experts)</small></p>
+						<p class="fragment">Things can rarely be declared the same<br><small>(two things are considered identical for one expert in a certain application, and considered different in other contexts)</small></p>
+						<p class="fragment">Impossible that experts manually provide all possible contexts</p>
+						<p class="fragment"><b>Current Situation: disconnected experiments or erroneous owl:sameAs</b></p>
+						<p class="fragment"><b>Result: limited or erroneous inferences</b></p>
+					</section>
+					<section>
+					<h2>Challenges</h2>
+						<hr>						
+						<p>1. Syntactic Problems<br><small>heterogeneity of the formats in which scientific data are published</small></p>
+						<p>2. Semantic Problems<br><small>terminological variations encountered across the multiple scientific datasets (e.g. synonyms, aliases, multilingualism)</small></p>
+						<p>3. Identity Problems</p>
+						<p class="fragment"><b>Best practices <a href="https://www.w3.org/DesignIssues/LinkedData.html">[Linked Data Principles]</a><br>Adopt Semantic Web technologies<br><small>Construct a five-star knowledge graph</small></b></p>
+					</section>
+					<section>
+					<h2>Constructing a five-star knowledge graph</h2>
+						<hr>						
+						<p><img src="figures/life-sciences-kg.png" style="width:55%"/></br><br>
+						2.8 K Excel Files / 2.7 M triples / 21 Named Graphs (i.e. projects)</p>
+					</section>
+					<section>
+					<h2>Contextual Identity for Life Sciences</h2>
+						<hr>						
+						<p><img src="figures/Experiments.png" style="width:55%"/></p>
+					</section>
+					<section>
+					<h2>Contextual Identity for Rule Detection</h2>
+						<hr>						
+						<p><img src="figures/Rule-Detection.png" style="width:60%"/></p>
+						<p class="fragment">We want to detect for each context GCi, the measures mi where<br><br>
+						identiConTo<GCi>(i1, i2) ∩ observes(i1, m1) → observes(i2, m2) with m1 ≃ m2<br><br>
+						<b>identiConTo<GCi>(i1, i2) → same(mi)</b>
+						</p>
+					</section>
+					<section>
+					<h2>Contextual Identity for Rule Detection</h2>
+						<hr>						
+						<p><img src="figures/Rules.png" style="width:90%"/></p>
+					</section>					
+				</section>	 -->
+				
+				
+				
+				
+				
+				
+				<!-- CONCLUSION-->
+				<section>
+					<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
+						<h2>Conclusion &amp;<br>Perspectives</h2>
+					</section>
+					<section>					
+					<h2>Research Question</h2>
+					<hr>
+					<p><b>How to limit the misuse of identity links<br>in Knowledge Graphs?</b></p>
+					</section>
+                    <section>					
+					<h2>Results Summary</h2>					
+						<hr>
+                        <div class="fragment">
+                        <div><b>I. sameAs.cc</b></div>
+						<ul class="no-bullets">		
+								<li class="fragment"><h5>&bull; Largest collection of semantically interpretable identity statements and its transitive closure</h5></li>
+                                <li class="fragment"><h5>&bull; Efficient solution to compute the closure and store/access the sameAs statements and closure</h5></li>
+                                <li class="fragment"><h5><b>Help users/applications in finding and reusing identical terms &rarr; enhance identity-based systems (e.g. question answering under entailment, ontology alignment)</b></h5></li>
+						</ul>
+                        </div>
+                        <div class="fragment">
+                        <div><b>II. Identity Invalidation Approach</b></div>
+						<ul class="no-bullets">		
+								<li class="fragment"><h5>&bull; Use community structure and link symmetry to assign an error degree for each owl:sameAs link</h5></li>
+                                <li class="fragment"><h5>&bull; No assumptions on the data, scales to the Web (increases SoA by an order of magnitude)</h5></li>
+                                <li class="fragment"><h5><b>Detect erroneous identity links and validate correct ones (precision/recall depends on threshold)</b></h5></li>
+						</ul>
+                        </div>
+                        <div class="fragment">
+                        <div><b>III. Contextual Identity Relation</b></div>
+                        <ul class="no-bullets">		
+								<li class="fragment"><h5>&bull; Explicitly associate the context(s) in which two instances are identical (context is a sub-ontology)</h5></li>
+                                <li class="fragment"><h5>&bull; Approach for automatically detecting contextual identity links (can use experts knowledge to filter irrelevant contexts, tested on a newly constructed knowledge graph for life sciences)</h5></li>
+                            <li class="fragment"><h5><b>Exploited for detecting rules to predict missing information, store/query the similarity of instances</b></h5></li>
+						</ul>
+<!--
+						<ul class="no-bullets">		
+								<li>&bull; Explicitly associate the context in which two instances are identical</li>
+								<li>&bull; Approach of automatically detecting contextual identity links</li>
+                                <li>&bull; Applied on newly constructed knowledge graph for life sciences</li>
+						</ul>
+-->
+                        
+                        </div>
+					</section>
+					<!-- <section>					
+					<h2>Results Summary</h2>					
+						<hr>
+						<p><b>Approach for detecting erroneous identity links using the sameAs network's community structure</b></p>
+							<ul class="no-bullets">
+								<li class="fragment"><b>+</b> No assumptions on the data (UNA, mapping, desc)</li>
+								<li class="fragment"><b>+</b> Scale to the Web: runtime of 11 hours</li>
+								<li class="fragment"><b>+</b> Accuracy: 86% ; Recall: 93%</li>
+								<li class="fragment"><b>-</b> Precision: 40-73% (depending on the Eq Set size)</li>
+								<li class="fragment"><b>-</b> Manual Evaluation of only 300 sameAs links</li>
+							</ul>
+					</section> -->
+					<section>
+					<h2>Perspectives</h2>					
+						<hr>
+                        <div class="fragment">
+                        <div><b>Detect Erroneous Identity Links with Higher Precision</b></div>
+                        <div class="align-left">
+                        <ul>		
+								<li class="fragment"><h5>Combine different community detection techniques (e.g. choose technique resulting highest network modularity, combine error degrees, or choose a technique depending on the network structure)</h5></li>
+                                <li class="fragment"><h5>Include equality set's size (study its impact on precision e.g. # terms, # links, or # communities)</h5></li>
+								<li class="fragment"><h5>Combine different invalidation approaches (apply other techniques on links with high error degree)</h5></li>
+						</ul>
+                        </div>
+                        </div>
+                        <div class="fragment">
+                        <div><b>Adaptation Strategies for Contextual Identity</b></div>
+                        <div class="align-left">
+                        <ul>		
+								<li class="fragment"><h5>Relaxed identity of literals (study its impact on inference)</h5></li>
+								<li class="fragment"><h5>Adapt relation to ontology mappings</h5></li>
+								<li class="fragment"><h5>Relax algorithm constraints (e.g. use all ontology classes)</h5></li>
+						</ul>
+                        </div>
+                        </div>
+                        <div class="fragment">
+                        <div><b>Knowledge Discovery</b></div>
+                        <div class="align-left">
+                        <ul>		
+								<li class="fragment"><h5>Calculate contexts of difference (contextual identity do not distinguish between the absence of a property and the difference of the property values)</h5></li>
+								<li class="fragment"><h5>Detect causal rules (e.g. combine contexts of identity/difference with the instances temporal aspects)</h5></li>
+						</ul>
+                        </div>
+                        </div>
+                        </section>
+                </section>
+<!--
+								<li class="fragment"><b>Changes of Practice in terms of how identity is asserted in the LOD Cloud</b><br><small>- Validate the ‘correctness’ of an owl:sameAs statement, with respect to its corresponding identity set prior to its assertion<br>- Notion of correctness can be defined and parametrized according to several hypothesises (e.g. logical consistency, UNA validation, terms’ descriptions similarity, and/or the identity statement’s impact on the network structure)
+								<br>- Several necessary directions can be investigated, such as large scale inconsistency detection, and ontology mappings
+								<br>- Does not intend to force users to go through an authority in order to link their data, but intends to serve as a way of labelling incorrect identity assertions or re-qualifying these links into a more parametrized identity relation.</small>
+								</li>
+							</ul>
+															<p class="fragment"><a>By preventing the publication of incorrect owl:sameAs, and detecting the incorrect existing ones, we envision to construct a parallel and higher quality subset(s) of the LOD Cloud.</a></p>
+-->
+					
+
+				
+				<!-- FINAL SLIDE -->
+<!--
+
+                
+				<section>
+					<h1>Thank You!</h1>
+					<hr>
+                    <div class="fragment">
+					<h4 class=>IDENTITY MANAGEMENT IN <br> KNOWLEDGE GRAPHS</h4>
+					<div>
+						<h2>Joe Raad</h2>
+ 					</div>
+					<p>
+						<small>PhD Defense - November 30, 2018
+                            <b><br><br>ABIES Doctoral School</b></small>
+						
+ 					</p>	<hr>				
+					<p>
+						<small><a href="">MIA-Paris, AgroParisTech, INRA - Paris, France</a>
+						<br>Supervisors: Juliette Dibie, Liliana Ibanescu
+						<br><br><a href="">LRI, Paris Sud University, CNRS - Orsay, France</a>
+						<br>Supervisors: Nathalie Pernelle, Fatiha Saïs</small>
+					</p> <br>
+					<div>
+                    <img src="figures/logo-all.png" width=100%>
+                    </div>
+                    </div>
+				</section>
+-->
+                
+                <!-- FINAL SLIDE -->
+                <section>
+					<h1>Thank You!</h1>
+					<hr>
+                    <div class="fragment">
+					<small>
+                    <ul>
+                    <li><u>J. Raad</u>, W. Beek, N. Pernelle, F. Saïs, and F. van Harmelen
+						<br>"Détection de liens d’identité erronés en utilisant la détection de communautés dans les graphes d'identité".<br><b><i>Revue des Sciences et Technologies de l'Information ISI, 2018</i></b>
+				    </li><br>
+                    <li><u>J. Raad</u>, N. Pernelle, F. Saïs, J. Dibie, L. Ibanescu, and S. Dervaux
+						<br>"Comment représenter et découvrir des liens d’identités contextuels dans une base de connaissances :<br>applications à des données expérimentales en science du vivant".
+                        <br><b><i>Revue d’Intelligence Artificielle RIA, 2018</i></b>
+				    </li><br>
+				    <li><u>J. Raad</u>, W. Beek, F. van Harmelen, N. Pernelle, and F. Saïs
+						<br>"Detecting Erroneous Identity Links on the Web using Network Metrics".<br><b><i>International Semantic Web Conference ISWC, 2018</i></b>
+				    </li><br>
+                    <li>W. Beek, <u>J. Raad</u>, J. Wielemaker, and F. van Harmelen
+						<br>"sameAs.cc: The Closure of 500M owl:sameAs Statements".
+						<br><i><b>Extended Semantic Web Conference ESWC, 2018</b> (best resource paper award)</i>
+				    </li><br>
+				    <li><u>J. Raad</u>, N. Pernelle, and F. Saïs
+						<br><b>"Detection of Contextual Identity Links in a Knowledge Base".<br><i>Knowledge Capture Conference K-Cap, 2017</i></b>
+				    </li><br>
+				    <li><u>J. Raad</u>, N. Pernelle, and F. Saïs
+						<br>"Détection de liens d’identité contextuels dans une base de connaissances".<br><i><b>28es Journées francophones d’Ingénierie des Connaissances IC, 2017</b> (best paper award)</i>
+				    </li><br>
+				    <li>L. Ibanescu, J. Dibie, S. Dervaux, E. Guichard, and <u>J. Raad</u>
+						<br>"PO<sup>2</sup> - A Process and Observation Ontology in Food Science. Application to Dairy Gels".<br><b><i>Research Conference on Metadata and Semantics Research MTSR, 2016</i></b>
+				    </li>
+                    </ul>   
+                    </small>
+                    </div>
+				</section>
+                
+                
+                <!-- ANNEX -->
+                <section>
+					<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
+						<h2>Annex</h2>
+					</section>
+				    <section>
+						<h2>FINDING THE THRESHOLD <small>(1/2)</small></h2>
+						<hr>
+						<b>Manual evaluation of 200 random owl:sameAs by 4 Semantic Web experts</b>
+						<div>
+						  <img src="./figures/evaluation-1.png" style=" border:none"/>				  
+						</div>
+						<p class="fragment"><b>1.</b> All evaluated links with an error degree &leq; 0.4 are correct</p>
+                        <p class="fragment"><b>2.</b> The higher an error degree is, the more likely an owl:sameAs link is erroneous</p>
+					</section>
+					<section>
+						<h2>FINDING THE THRESHOLD <small>(2/2)</small></h2>
+						<hr>
+						<h4>Manual evaluation of 60 owl:sameAs with err > 0.9</h4>
+						<div>
+						  <img src="./figures/evaluation-2.png" style=" border:none"/>				  
+						<div><b>3.</b> Links with an err > 0.99 and belonging to large equality sets are more likely to be incorrect</div>
+                        </div>
+					</section>
+                    <section>
+						<h2>Accuracy / Recall Evaluation<br>
+                            <small>(threshold 0.99)</small></h2>
+						<hr>											
+						<div class="fragment">
+                            Gold standard: 78  correct DBpedia-Freebase owl:sameAs
+                            <br>
+                            <small>
+                            <a href="https://pdfs.semanticscholar.org/ef42/43e8fa81135c87d5591c84c9cfcd24c82875.pdf">[Acosta et al. 2013]
+                            </a>
+                            </small>
+                        </div>
+						<div class="fragment"> 77 / 78 links have an err &le; 0.99<br><small>(error degree ranging from 0.52 to 0.94)</small><br>
+                            <b><u>98.7% Accuracy</u></b>
+                        </div>
+                        <div class="fragment">
+                            <hr>
+                            Randomly chose 40 different terms (e.g. dbr:Strawberry, dbr:Chair)<br><small>not explicitly sameAs but some in the same equality set</small>
+                        <br>
+                            Added all the possible 780 links between them
+                        </div>
+                        <div class="fragment">
+                            <br>725/780 have an error degree > 0.99<br><small>(error degree ranging from 0.87 to 0.9999)</small><br><b><u>93% Recall</u></b>
+                        </div>
+					</section> 
+                    <section>
+						<h2>Qualitative Evaluation</h2>
+						<hr>
+                        <b>TN:</b> correct sameAs + error degree &leq; <b>0.99</b><br>
+                        <b>TP:</b> erroneous sameAs + error degree > <b>0.99</b><br><hr> 
+						<table  class="fragment">
+						<thead>
+							<tr>
+								<th></th>
+								<th>TN</th>
+								<th>TP</th>
+								<th>FN</th>
+								<th>FP</th>
+								<th>Total</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><b>Sample 1 <small>[200 random sameAs]</small></b></td>
+								<td>97</td>
+								<td>0</td>
+								<td>12</td>
+								<td>0</td>
+								<td>109</td>
+							</tr>
+							<tr>
+								<td><b>Sample 2 <small>[60 sameAs > 0.9]</small></b></td>
+								<td>6</td>
+								<td>20</td>
+								<td>5</td>
+								<td>8</td>
+								<td>39</td>
+							</tr>
+							<tr>
+								<td><b>Sample 3 <small>[Obama Equality Set]</small></b></td>
+								<td>30</td>
+								<td>2</td>
+								<td>0</td>
+								<td>0</td>
+								<td>32</td>
+							</tr>
+                            <tr>
+								<td><b>Sample 4 <small>[DBPedia-Freebase sameAs]</small></b></td>
+								<td>77</td>
+								<td>0</td>
+								<td>0</td>
+								<td>1</td>
+								<td>78</td>
+							</tr>
+                            <tr class="negative-point">
+								<td><b>Sample 5 <small>[Injected erroneous sameAs]</small></b></td>
+								<td>0</td>
+								<td>725</td>
+								<td>55</td>
+								<td>0</td>
+								<td>780</td>
+							</tr>
+							<tr>
+								<td><b>Total</b></td>
+								<td>210</td>
+								<td>747</td>
+								<td>72</td>
+								<td>9</td>
+								<td><b>1038</b></td>
+							</tr>
+						</tbody>
+					</table>	<br>				
+					<div class="fragment">
+                        <div class="row">						
+						<div class="column3">
+                            <div>
+                                <b><u>40 - 71% Precision</u></b><br>
+                                <small>
+                                <div class="eq-c">
+                                    <div class="fraction"><span class="fup">TP</span><span class="bar">/</span><span class="fdn">TP + FP</span>
+                                    </div>
+                                </div>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="column3">
+                            <div>
+                                <b><u>90 - <font color="#802000">92%</font> Accuracy</u></b><br>
+                                <small>
+                                <div class="eq-c">
+                                    <div class="fraction"><span class="fup">TN + TP</span><span class="bar">/</span><span class="fdn">Total</span>
+                                    </div>
+                                </div>
+                                </small>
+                            </div>
+                        </div>	
+                        <div class="column3">
+                            <div>
+                                <b><u>56 - <font color="#802000">91%</font> Recall</u></b><br>
+                                <small>
+                                <div class="eq-c">
+                                    <div class="fraction"><span class="fup">TP</span><span class="bar">/</span><span class="fdn">TP + FN</span>
+                                    </div>
+                                </div>
+                                </small>
+                            </div>
+                        </div>
+					</div>
+                    </div>    
+                    </section>
+                    <section>
+						<h2>Symmetry Impact <small>(1/2)</small></h2>
+						<hr>
+						<div>
+						  <table>
+						<thead>
+							<tr>
+								<th></th>
+								<th>Symmetrical</th>
+								<th>Non-symmetrical</th>
+								<th>Total</th>
+							</tr>
+						</thead>
+						<tbody>
+                            <tr>
+								<td><b>Total</b></td>
+								<td>94</td>
+								<td>164</td>
+								<td>258</td>
+							</tr>
+							<tr class="fragment">
+								<td><b>same</b></td>
+								<td>92<br>(98%)</td>
+								<td>127<br>(77%)</td>
+								<td>219<br>(85%)</td>
+							</tr>
+                            <tr class="fragment">
+								<td><b>related + unrelated</b></td>
+								<td>2<br>(2%)</td>
+								<td>37<br>(23%)</td>
+								<td>39<br>(15%)</td>
+							</tr>                   
+						</tbody>
+					</table><br>				  
+						</div>
+						<p class="fragment"><b>1.</b> Symmetrical owl:sameAs links are more likely to be correct</p>
+					</section>
+					<section>
+						<h2>Symmetry Impact <small>(2/2)</small></h2>
+						<hr>
+						<h4>Discarded the weight from the error degree</h4>										
+						<p class="fragment"> Manual evaluation of 30 sameAs links with error degree > 0.99 + in the largest equality set</p>
+						<p class="fragment"> Only 2 erroneous owl:sameAs<br><small>(17 correct and 11 can't tell)</small></p> 
+						<p class="fragment"><b><u>Precision drops from 88% to 11%</u></b><br><small>(in the largest equality set)</small></p> 
+					</section>
+                    <section>
+						<h2>Equality Set - 'Barack Obama'</h2>
+						<hr>
+                        <div>
+						440 names 'should' denote the same real-world entity <small><a href="http://sameas.cc/term?id=5723">(EqSet 5723)</a></small><br><br>
+						<img src="./figures/community-structure2.png" style="width:100%; border:none"/>
+                        </div>
+                        <div>
+							<b>C0:</b> person; <b>C1:</b> president; <b>C2:</b> government; <b>C3:</b> senator
+				        </div>
+					</section>    
+					<section>
+						<h2>Who is messing up the LOD Cloud?</h2>
+						<hr>
+						<div>
+						  <pre>
+						  <code data-trim contenteditable>
+							  freebase:m.05b6w1g owl:sameAs dbr:President_Barack_Obama
+							  freebase:m.05b6w1g owl:sameAs dbr:President_Obama 						 
+						  </code></pre>
+						</div>
+						<div class="fragment">
+						  <pre>
+						  <code data-trim contenteditable>
+							  freebase:m.05b6w1g freebase:object.name "Presidency of Barack Obama"@en 							  
+						  </code></pre>
+						</div>
+						<div class="fragment">
+                            The two only owl:sameAs with an error degree > 0.9999<br><small>(in the 'Barack Obama' equality set)</small>
+                        </div>
+					</section>
+                    <section>
+						<h2>How messed up is the LOD Cloud?</h2>
+						<hr>
+						Our approach can give an approximation based on:
+						<br>
+						<i>
+						<p>1. nbr of symmetrical sameAs<br><small>(450M owl:sameAs with 98% chance of correctness)</small></p>
+						<p>2. nbr of non-symmetrical sameAs with err degree &leq;0.99 <br><small>(105M owl:sameAs with a 88.6% chance of correctness)</small></p>
+						<p>3. nbr of non-symmetrical sameAs with err degree >0.99<br><small>(1.2M owl:sameAs with an erroneous probability between 40 and 88%)</small></i></p>					
+						<p class="fragment"><b>We estimate that 4% of owl:sameAs links in the LOD are erroneous<br>(around 22.5M links)</b>
+						<br><small>previous estimations:<br>2.8% by <a href="https://www.emse.fr/~zimmermann/Papers/jws-si2012.pdf">[Hogan et al. 2012] </a> and 21% by <a href="http://tw.rpi.edu/media/latest/261.pdf">[Halpin et al. 2010]</a></small></p>
+					</section>
+                    <section data-transition="none">
+                        <h2>DECIDE <small>(1/3)</small></h2>
+						<hr>
+                        <img src="./figures/DECIDE-s1.png"/>
+                    </section>
+                    <section data-transition="none">
+                        <h2>DECIDE <small>(2/3)</small></h2>
+						<hr>
+                        <img src="./figures/DECIDE-s2.png"/>
+                    </section>
+                    <section data-transition="none">
+                        <h2>DECIDE <small>(3/3)</small></h2>
+						<hr>
+                        <img src="./figures/DECIDE-s3.png"/>
+                    </section>
+			     </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/search/search.js', async: true },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+			
+			Reveal.configure({ slideNumber: 'c/manual'});
+
+		</script>
+	</body>
+</html>
